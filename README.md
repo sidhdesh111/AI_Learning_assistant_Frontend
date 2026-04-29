@@ -572,7 +572,7 @@ Licensed under the **ISC License** - see LICENSE file for details.
 
 ---
 
-## 🎉 Acknowledgments
+## 🎉 Acknowledgments   
 
 - **React Team** - Amazing UI framework
 - **Tailwind Labs** - Beautiful utility CSS

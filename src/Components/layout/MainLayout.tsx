@@ -10,9 +10,7 @@ const MainLayout = () => {
   const navigation = useNavigation();
 
   const isLoading = navigation.state === "loading";
-
-  console.log(navigation);
-
+  
   return (
     <>
       <MainHeader />
@@ -27,4 +25,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default React.memo(MainLayout);

@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { Router } from "./Router/Route.tsx";
 import { AuthProvider } from "./Context/AuthContext.tsx";
 import { Toaster } from "react-hot-toast";
+import "animate.css";
 
 createRoot(document.getElementById("root")!).render(
   <AuthProvider>

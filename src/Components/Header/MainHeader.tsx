@@ -7,8 +7,15 @@ import {
   TextAlignEnd,
   X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, {
+  useCallback,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { Link, NavLink } from "react-router";
+import Big_Menu from "../Big_Menu/Big_Menu";
+import Big_MobileMenu from "../Big_Menu/Big_MobileMenu";
 
 const menuItems = [
   {
@@ -20,16 +27,70 @@ const menuItems = [
     label: "Features",
     isExpanded: true,
     link: "feature",
+    children: [
+      {
+        label: "ai notes",
+        desc: "Notes that write themselves",
+      },
+      {
+        label: "ai summarization",
+        desc: "Review faster, anytime",
+      },
+      {
+        label: "ai flashcard",
+        desc: "Make it impossible to forget",
+      },
+      {
+        label: "Ai Quizzes",
+        desc: "Test yourself before exams do",
+      },
+      {
+        label: "ai tutor",
+        desc: "Ask questions. Get clarity 24/7",
+      },
+    ],
   },
   {
     label: "solutions",
     isExpanded: true,
     link: "solution",
+    children: [
+      {
+        label: "For Students",
+        desc: "Notes that write themselves",
+      },
+      {
+        label: "For Self-Learners",
+        desc: "Review faster, anytime",
+      },
+      {
+        label: "For Educators",
+        desc: "Make it impossible to forget",
+      },
+      {
+        label: "For Professionals",
+        desc: "Test yourself before exams do",
+      },
+    ],
   },
   {
     label: "resources",
     isExpanded: true,
     link: "resources",
+    children: [
+      {
+        label: "FAQ",
+        desc: "Notes that write themselves",
+      },
+      {
+        label: "Help Center",
+        desc: "Review faster, anytime",
+      },
+      {
+        label: "Blog",
+        desc: "Make it impossible to forget",
+      },
+    ],
   },
   {
     label: "Contact",
@@ -40,14 +101,25 @@ const menuItems = [
 
 const MainHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [indexofMobileMenu, setIndexOfMobileMenu] = useState<number | null>(
+    null,
+  );
   const [indexofBigMenu, setIndexOfBigMenu] = useState<number | null>(null);
+  const closeTimeoutRef =
+    React.useRef<React.RefObject<React.RefObject<any> | null>>(null);
 
-  const handleMouseLeave = (index: number) => {
-    setIndexOfBigMenu(indexofBigMenu === index ? index : null);
-    console.log(indexofBigMenu);
-  };
+  const handleHoverBigMenu = useCallback((index: number) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+    setIndexOfBigMenu(index);
+  }, []);
 
-  console.log(indexofBigMenu);
+  const handleMouseLeave = useCallback(() => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIndexOfBigMenu(null);
+    }, 300);
+  }, []);
 
   return (
     <header className="relative transition-all duration-1000 ease-in-out">
@@ -93,37 +165,37 @@ const MainHeader = () => {
 
       <div className="bg-slate-100/10 py-5 md:py-4 px-6 shadow-md shadow-gray-200">
         <div className="container mx-auto ">
-          <div className="flex  justify-between items-center gap-2 w-full lg:px-10">
+          <div className="flex justify-between items-center gap-2 w-full lg:px-2">
             {/* logo  */}
 
-            <div className="w-auto lg:w-[20%]">
+            <div className="w-auto lg:w-[28%]">
               <div className="flex items-center gap-1 md:gap-2 text-sm md:text-lg font-medium">
-                <div className="p-1.5 md:p-2 rounded-md md:rounded-xl bg-linear-to-br shadow-md shadow-emerald-200 tracking-tighter capitalize from-emerald-400 to-teal-700">
-                  <BrainCircuit
-                    className="w-5 h-5 md:w-6 md:h-6 text-white "
-                    strokeWidth={3}
-                  />
-                </div>
-                <span className="hidden md:block"> AI Learning Assistant</span>
+                <Link to={"/"}>
+                  <div className="p-1.5 md:p-2 rounded-md md:rounded-xl bg-linear-to-br shadow-md shadow-emerald-200 tracking-tighter capitalize from-emerald-400 to-teal-700">
+                    <BrainCircuit
+                      className="w-5 h-5 md:w-6 md:h-6 text-white "
+                      strokeWidth={3}
+                    />
+                  </div>
+                </Link>
+                <span className="hidden md:block">AI Learning Assistant</span>
               </div>
             </div>
-            <div className=" hidden lg:block w-[40%]">
+            <div className=" hidden lg:flex lg:w-[45%] text-center  justify-center items-center">
               {/* nav  */}
 
               <nav>
-                <ul
-                  onMouseLeave={() => setIndexOfBigMenu(null)}
-                  className="flex justify-between items-center gap-2"
-                >
+                <ul className="relative flex justify-between items-center gap-2">
                   {menuItems?.map((item, index) => (
                     <li
-                      onMouseEnter={() => setIndexOfBigMenu(index)}
+                      onMouseEnter={() => handleHoverBigMenu(index)}
+                      onMouseLeave={() => handleMouseLeave()}
                       key={index}
-                      className="font-normal capitalize text-[1.1rem] px-2 flex items-end gap-0.5 group "
+                      className="font-normal text-[1.1rem] px-2 flex items-end gap-0.5 group relative"
                     >
                       <NavLink
                         className={({ isActive }) =>
-                          `${isActive ? "text-teal-600" : ""}`
+                          `${isActive ? "text-teal-600" : ""} capitalize`
                         }
                         to={item.link as string}
                       >
@@ -135,15 +207,23 @@ const MainHeader = () => {
                           className="w-5 h-5 group-hover:rotate-180 transition-normal duration-300"
                         />
                       )}
+                      {index === indexofBigMenu && item.isExpanded && (
+                        <Big_Menu
+                          index={index}
+                          item={item}
+                          handleHoverBigMenu={() => handleHoverBigMenu(index)}
+                          handleMouseLeave={handleMouseLeave}
+                        />
+                      )}
                     </li>
                   ))}
                 </ul>
               </nav>
             </div>
             {/* buttons  */}
-            <div className=" hidden md:w-[40%] lg:w-[25%] md:flex justify-end">
+            <div className=" hidden md:w-[40%] lg:w-[30%] md:flex justify-end">
               <div className="flex items-center justify-center gap-2">
-                <button className="px-6 py-1.5 border-2 border-transparent hover:border-emerald-500 rounded-lg transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 group">
+                <button className="px-4 py-1.5 border-2 border-transparent hover:border-emerald-500 rounded-lg transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 group">
                   <Link
                     to="register"
                     className="text-gray-600 font-medium text-md group-hover:text-emerald-500 transition-colors duration-300"
@@ -151,7 +231,7 @@ const MainHeader = () => {
                     Sign Up
                   </Link>
                 </button>
-                <button className="px-6 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
+                <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
                   <Link
                     to="Login"
                     className="text-white font-medium text-md  group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-emerald-400 group-hover:to-teal-600 transition-all duration-300"
@@ -210,18 +290,45 @@ const MainHeader = () => {
 
                 <div>
                   <nav>
-                    <ul className="flex flex-col justify-center gap-4">
+                    <ul className="relative h-full flex flex-col justify-center">
                       {menuItems?.map((item, index) => (
-                        <li key={index}>
-                          <NavLink
-                            to={item.link!}
-                            className={({ isActive }) =>
-                              `${isActive ? "hover:text-emerald-700" : ""} text-emerald-300`
-                            }
+                        <React.Fragment key={index}>
+                          <li
+                            key={index}
+                            className={`py-2 ${indexofMobileMenu === index ? null : "border-b-2 border-slate-300"} w-full flex items-end`}
                           >
-                            {item.label}
-                          </NavLink>
-                        </li>
+                            {(item?.children?.length as number) > 0 ? (
+                              <div
+                                onClick={() =>
+                                  setIndexOfMobileMenu(
+                                    indexofMobileMenu === index ? null : index,
+                                  )
+                                }
+                                className="font-medium capitalize cursor-pointer"
+                              >
+                                {item.label}
+                              </div>
+                            ) : (
+                              <NavLink
+                                to={item.link}
+                                className={({ isActive }) =>
+                                  `${isActive ? "text-teal-600" : ""} font-medium capitalize`
+                                }
+                              >
+                                {item.label}
+                              </NavLink>
+                            )}
+                            {item.isExpanded && (
+                              <ChevronDown
+                                strokeWidth={1.5}
+                                className={`w-5 h-5 ${indexofMobileMenu === index ? "rotate-180" : ""} transform transition-normal duration-300`}
+                              />
+                            )}
+                          </li>
+                          {indexofMobileMenu === index && (
+                            <Big_MobileMenu item={item} />
+                          )}
+                        </React.Fragment>
                       ))}
                     </ul>
                   </nav>
@@ -231,9 +338,8 @@ const MainHeader = () => {
           </div>
         </div>
       }
-      {indexofBigMenu}
     </header>
   );
 };
 
-export default MainHeader;
+export default React.memo(MainHeader);

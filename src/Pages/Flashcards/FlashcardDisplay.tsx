@@ -110,7 +110,11 @@ const FlashcardDisplay = () => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-8">
+    <div
+      className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-8"
+      data-aos="fade-up"
+      data-aos-duration="700"
+    >
       <div className="space-y-8">
         <button
           onClick={handleOnBack}

@@ -47,7 +47,11 @@ const Dashboardpage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center">
+      <div
+        className="min-h-[80vh] flex items-center justify-center"
+        data-aos="fade-up"
+        data-aos-duration="400"
+      >
         <Spin_loader width={60} height={60} border={5} color="green" />
       </div>
     );
@@ -55,7 +59,10 @@ const Dashboardpage = () => {
 
   if (!dashboardData || !dashboardData.overview) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
+      <div
+        className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center"
+        data-aos="fade-up"
+      >
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-100 mb-4">
             <TrendingUp className="w-8 h-8 text-slate-400" />
@@ -91,7 +98,7 @@ const Dashboardpage = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" data-aos="fade-up" data-aos-duration="650">
       <div className=" absolute inset-0 bg-[radial-gradient(#e5e7eb_1px, transparent_1px)] bg-size-[16px_16px] opacity-30 pointer-events-none"></div>
       <div className="relative max-w-7xl mx-auto">
         {/* header  */}

@@ -1,9 +1,10 @@
-import { Lock, Pen, Share, Share2, UserStar, AArrowUp, Book, Brain, ChartBar, NotebookIcon, NotepadText } from "lucide-react";
+import { Lock, Pen, Share, Share2, UserStar, AArrowUp, Book, Brain, ChartBar, NotebookIcon, NotepadText, ArrowBigRight, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import Features_Slider from "../../Components/Slider/Features_Slider";
 import { } from 'lucide-react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FAQ from "../../Components/FAQ/FAQ";
+import { refreshAOS } from "../../lib/aos";
 import Testimonial from "../../Components/Testimonial/Testimonial";
 const section2 = [
   {
@@ -324,11 +325,11 @@ const Home = () => {
     AT: "AT-0"
   });
 
-  const [faqopen, setFaqOpen] = useState<number | null>(null)
+  const [faqopen, setFaqOpen] = useState<number | null>(null);
 
-
-
-
+  useEffect(() => {
+    requestAnimationFrame(() => refreshAOS());
+  }, [faqopen]);
 
 
 
@@ -339,7 +340,7 @@ const Home = () => {
       <section className="min-h-[70%]">
         <div className="container mx-auto px-2 lg:px-10 py-20">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-4 items-center lg:px-20">
-            <div className="lg:w-1/2">
+            <div className="lg:w-1/2" data-aos="fade-right" data-aos-duration="800">
               <h2 className="text-3xl lg:text-4xl px-2 text-center lg:text-start font-medium leading-10 lg:mr-20 mb-4 text-slate-900">
                 World's most powerful AI toolkit for Learner's and Educator's
               </h2>
@@ -357,7 +358,7 @@ const Home = () => {
                 </button>
               </Link>
             </div>
-            <div className="lg:w-1/2">
+            <div className="lg:w-1/2" data-aos="fade-left" data-aos-duration="900">
               <img
                 className=" lg:min-h-50 h-auto aspect-auto w-auto"
                 src="./ai-banner.webp"
@@ -367,10 +368,17 @@ const Home = () => {
         </div>
       </section>
       {/* amplifies section  */}
-      <section className=" bg-linear-to-br from-slate-100/30 to-neutral-200/20">
+      <section
+        className=" bg-linear-to-br from-slate-100/30 to-neutral-200/20"
+        data-aos="fade-up"
+      >
         <div className="container mx-auto px-6 lg:px-30 py-15 lg:py-30 ">
           <div>
-            <h2 className="text-xl lg:text-3xl font-bold text-center">
+            <h2
+              className="text-xl lg:text-3xl font-bold text-center"
+              data-aos="zoom-in"
+              data-aos-delay="50"
+            >
               AI, when done right, amplifies great teaching - never replaces it
             </h2>
             <p className="text-xl lg:text-lg text-slate-600 font-medium text-center my-4">
@@ -381,6 +389,8 @@ const Home = () => {
                 <div
                   key={index}
                   className="px-5 py-10 lg:p-15 bg-white  rounded-xl border-2 border-slate-200 lg:border-none"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
                 >
                   <div className="flex items-center flex-col lg:flex-row lg:items-start  gap-5 ">
                     <div
@@ -406,11 +416,11 @@ const Home = () => {
         </div>
       </section>
       {/* Feature Slider  */}
-      <section>
+      <section data-aos="fade-up">
         <div className="relative mx-auto py-10 lg:py-20">
           <div className="container mx-auto px-6 py-4 lg:py-20 lg:px-10">
 
-            <h2 className="text-xl lg:text-3xl font-bold text-center">
+            <h2 className="text-xl lg:text-3xl font-bold text-center" data-aos="fade-down">
               AI that supports you at every step
             </h2>
           </div>
@@ -422,10 +432,15 @@ const Home = () => {
         </div>
       </section>
       {/* tab section features */}
-      <section className=" pb-10 lg:pb-20 ">
+      <section className=" pb-10 lg:pb-20 " data-aos="fade-up">
         <div className="hidden lg:block container mx-auto ">
           {FeturesData.map((feature, index) => (
-            <div key={index} className="px-6 lg:px-40 mx-auto mb-30">
+            <div
+              key={index}
+              className="px-6 lg:px-40 mx-auto mb-30"
+              data-aos="fade-up"
+              data-aos-delay={Math.min(index * 80, 400)}
+            >
               <div className="flex items-center gap-8 mb-10">
                 <div className={`w-fit p-4 bg-linear-to-br ${feature.colorclass} rounded-lg shadow-lg shadow-rose-400/20`}>
                   <feature.Icons className={`w-10 h-10 ${feature.textColor}`} />
@@ -481,19 +496,16 @@ const Home = () => {
               </div>
             </div>
           ))}
-
-
-
-
-
-
         </div>
       </section>
 
       {/* Testimonial Section  */}
-      <section className="py-10 lg:py-30 lg:px-10 bg-emerald-300/30">
-        <div className="container mx-auto px-6 lg:px-30 ">
-          <div className="mb-10 lg:mb-30">
+      <section
+        className="py-10 lg:py-30 lg:px-10 bg-emerald-300/30"
+        data-aos="fade-up"
+      >
+        <div className="container mx-auto px-4 lg:px-30 ">
+          <div className="mb-8 lg:mb-30" data-aos="zoom-in">
             <h2 className="text-xl lg:text-3xl font-bold capitalize text-center"> Impact stories from our users worldwide</h2>
             <p className="text-center text-md mt-4 text-slate-600 font-medium">5M+ users across the globe are saving time, reducing stress, and learning faster with Mindgrasp AI Study tool.</p>
           </div>
@@ -505,9 +517,9 @@ const Home = () => {
       </section>
 
       {/* FAQ section  */}
-      <section className="py-10 lg:py-30 lg:px-10 bg-linear-to-br from-emerald-100/10 to-teal-200/10">
+      <section className="py-10 lg:py-30 lg:px-10" data-aos="fade-up">
         <div className="container mx-auto px-6 lg:px-30 ">
-          <div className="mb-10 lg:mb-30">
+          <div className="mb-10 lg:mb-30" data-aos="fade-down">
             <h2 className="text-xl lg:text-3xl font-bold capitalize text-center">Frequently asked questions (FAQ)</h2>
           </div>
           <div>
@@ -517,7 +529,36 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+      {/* call to Action  */}
+      <section
+        className="py-10 lg:py-20 lg:px-10 bg-teal-800 overflow-hidden"
+        data-aos="zoom-in"
+        data-aos-duration="900"
+      >
+        <div className="container mx-auto lg:px-30 ">
+          <div className="flex items-center flex-col lg:flex-row gap-4 lg:px-20">
+            <div className="flex flex-col gap-5 lg:gap-6 text-start px-4 w-full lg:w-[70%]">
+              <h2 className="text-center lg:text-left text-2xl lg:text-4xl lg:pr-10 font-medium text-white tracking-wide">
+                Your next study session can be smarter.
+              </h2>
+              <p className="text-lg text-white text-center lg:text-left">
+                Turn lectures, readings, and links into a complete AI study system in minutes.
+              </p>
+             <Link to={"/register"}> <button type="button" className="cursor-pointer w-fit mx-auto lg:mx-0 flex items-center gap-4 border-2 px-4 py-2 text-lg font-medium rounded border-white text-white
+              hover:bg-linear-to-br hover:from-emerald-400 hover:to-teal-600 hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-400/20 transition-all duration-500 ease-in-out
+              ">
+                Create Free Study Session
+                <ArrowRight className="w-5 h-5" strokeWidth={3} />
+              </button></Link>
+            </div>
+            <div className="relative mx-auto lg:mx-0 w-full lg:w-[40%]">
+              <img src="./AI_ASSISTANT.svg" className="block lg:hidden mx-auto mt-10" />
+              <img src="./AI_ASSISTANT.svg" className="hidden lg:block absolute w-[900px] -top-15  z-20  " />
+              <img src="./AI_ASSISTANT.svg" className="hidden lg:block absolute w-[700px] z-10 -top-25 left-10 opacity-20" />
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 };

@@ -105,7 +105,7 @@ const QuizTakepage = () => {
   const answeredCount = Object.keys(selectedAnswers).length;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-duration="650">
       <PageHeader title={quiz.title || "Take Quiz"} />
 
       <div className="mb-6">

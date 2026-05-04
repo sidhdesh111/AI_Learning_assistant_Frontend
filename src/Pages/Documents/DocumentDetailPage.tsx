@@ -137,7 +137,7 @@ const DocumentDetailPage = () => {
   }
 
   return (
-    <div>
+    <div data-aos="fade-up" data-aos-duration="650">
       <div className="mb-4">
         <Link
           to={"/documents"}

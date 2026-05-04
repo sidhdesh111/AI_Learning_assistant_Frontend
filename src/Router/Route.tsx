@@ -21,85 +21,106 @@ import MainLayout from "../Components/layout/MainLayout";
 import About from "../Pages/About/About";
 import Services from "../Pages/Services/Services";
 import Contact from "../Pages/Contact/Contact";
+import Features from "../Pages/Features/Features";
+import Solutions from "../Pages/Solutions/Solutions";
+import Resources from "../Pages/Resources/Resources";
+import RootOutlet from "./RootOutlet";
 
 export const Router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: <RootOutlet />,
     children: [
       {
-        element: <ProtectedRoutes />,
+        element: <AppLayout />,
         children: [
           {
-            path: "/dashboard",
-            element: <Dashboardpage />,
-          },
-          {
-            path: "/documents",
-            element: <DocumentList />,
-          },
-          {
-            path: "/documents/:id",
-            element: <DocumentDetailPage />,
-          },
-          {
-            path: "/flashcards",
-            element: <FlashcardListPage />,
-          },
-          {
-            path: "/flashcards/:id",
-            element: <FlashcardDisplay />,
-          },
-          {
-            path: "/quizzes/:quizId",
-            element: <QuizTakepage />,
-          },
-          {
-            path: "/quizzes/:quizId/results",
-            element: <QuizResultpage />,
-          },
-          {
-            path: "/profile",
-            element: <ProfilePage />,
+            element: <ProtectedRoutes />,
+            children: [
+              {
+                path: "/dashboard",
+                element: <Dashboardpage />,
+              },
+              {
+                path: "/documents",
+                element: <DocumentList />,
+              },
+              {
+                path: "/documents/:id",
+                element: <DocumentDetailPage />,
+              },
+              {
+                path: "/flashcards",
+                element: <FlashcardListPage />,
+              },
+              {
+                path: "/flashcards/:id",
+                element: <FlashcardDisplay />,
+              },
+              {
+                path: "/quizzes/:quizId",
+                element: <QuizTakepage />,
+              },
+              {
+                path: "/quizzes/:quizId/results",
+                element: <QuizResultpage />,
+              },
+              {
+                path: "/profile",
+                element: <ProfilePage />,
+              },
+            ],
           },
         ],
       },
-    ],
-  },
-  {
-    path: "/login",
-    element: <SignIn />,
-  },
-  {
-    path: "/register",
-    element: <SignUp />,
-  },
-  {
-    path: "*",
-    element: <Not_Found />,
-  },
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
       {
-        index: true,
-        element: <Home />,
+        path: "/login",
+        element: <SignIn />,
       },
       {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "services",
-        element: <Services />,
-      },
-      {
-        path: "contact",
-        element: <Contact />,
+        path: "/register",
+        element: <SignUp />,
       },
       {
         path: "*",
         element: <Not_Found />,
+      },
+      {
+        path: "/",
+        element: <MainLayout />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "about",
+            element: <About />,
+          },
+          {
+            path: "services",
+            element: <Services />,
+          },
+          {
+            path: "contact",
+            element: <Contact />,
+          },
+          {
+            path: "feature",
+            element: <Features />,
+          },
+          {
+            path: "solution",
+            element: <Solutions />,
+          },
+          {
+            path: "resources",
+            element: <Resources />,
+          },
+          {
+            path: "*",
+            element: <Not_Found />,
+          },
+        ],
       },
     ],
   },

@@ -2,17 +2,11 @@ import {
   BrainCircuit,
   ChevronDown,
   Mail,
-  MenuIcon,
   Phone,
   TextAlignEnd,
   X,
 } from "lucide-react";
-import React, {
-  useCallback,
-  useState,
-  type ReactNode,
-  type RefObject,
-} from "react";
+import React, { useCallback, useState } from "react";
 import { Link, NavLink } from "react-router";
 import Big_Menu from "../Big_Menu/Big_Menu";
 import Big_MobileMenu from "../Big_Menu/Big_MobileMenu";
@@ -26,76 +20,88 @@ const menuItems = [
   {
     label: "Features",
     isExpanded: true,
-    link: "feature",
+    link: "/feature",
     children: [
       {
         label: "ai notes",
-        desc: "Notes that write themselves",
+        desc: "Structured notes from lectures and PDFs.",
+        slug: "ai-notes",
       },
       {
         label: "ai summarization",
-        desc: "Review faster, anytime",
+        desc: "Layered summaries for fast review.",
+        slug: "ai-summarization",
       },
       {
         label: "ai flashcard",
-        desc: "Make it impossible to forget",
+        desc: "Smart cards grounded in your sources.",
+        slug: "ai-flashcard",
       },
       {
         label: "Ai Quizzes",
-        desc: "Test yourself before exams do",
+        desc: "Practice tests that match your material.",
+        slug: "ai-quizzes",
       },
       {
         label: "ai tutor",
-        desc: "Ask questions. Get clarity 24/7",
+        desc: "Ask questions grounded in your uploads.",
+        slug: "ai-tutor",
       },
     ],
   },
   {
     label: "solutions",
     isExpanded: true,
-    link: "solution",
+    link: "/solution",
     children: [
       {
         label: "For Students",
-        desc: "Notes that write themselves",
+        desc: "Exam-ready kits from your real notes.",
+        slug: "for-students",
       },
       {
         label: "For Self-Learners",
-        desc: "Review faster, anytime",
+        desc: "One thread across courses and side projects.",
+        slug: "for-self-learners",
       },
       {
         label: "For Educators",
-        desc: "Make it impossible to forget",
+        desc: "Formative checks tied to assigned readings.",
+        slug: "for-educators",
       },
       {
         label: "For Professionals",
-        desc: "Test yourself before exams do",
+        desc: "Recall for dense specs and internal docs.",
+        slug: "for-professionals",
       },
     ],
   },
   {
     label: "resources",
     isExpanded: true,
-    link: "resources",
+    link: "/resources",
     children: [
       {
         label: "FAQ",
-        desc: "Notes that write themselves",
+        desc: "Quick answers for new workspaces.",
+        slug: "faq-spot",
       },
       {
         label: "Help Center",
-        desc: "Review faster, anytime",
+        desc: "Reach the team when you are blocked.",
+        to: "/contact",
       },
       {
         label: "Blog",
-        desc: "Make it impossible to forget",
+        desc: "Playbooks from design and pedagogy.",
+        slug: "blog",
       },
     ],
   },
   {
     label: "Contact",
     isExpanded: false,
-    link: "contact",
+    link: "/contact",
   },
 ];
 
@@ -105,8 +111,7 @@ const MainHeader = () => {
     null,
   );
   const [indexofBigMenu, setIndexOfBigMenu] = useState<number | null>(null);
-  const closeTimeoutRef =
-    React.useRef<React.RefObject<React.RefObject<any> | null>>(null);
+  const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleHoverBigMenu = useCallback((index: number) => {
     if (closeTimeoutRef.current) {
@@ -122,7 +127,7 @@ const MainHeader = () => {
   }, []);
 
   return (
-    <header className="relative transition-all duration-1000 ease-in-out">
+    <header className="relative transition-all duration-1000 ease-in-out sticky z-50 top-0">
       {/* Top bar  */}
       <div className="bg-linear-to-r from-emerald-600 to-teal-800 py-2 px-6">
         <div className="container mx-auto">
@@ -163,7 +168,7 @@ const MainHeader = () => {
       </div>
       {/* Menu bar  */}
 
-      <div className="bg-slate-100/10 py-5 md:py-4 px-6 shadow-md shadow-gray-200">
+      <div className="bg-slate-100/10 py-5 md:py-4 px-6 shadow-md shadow-gray-200 bg-white ">
         <div className="container mx-auto ">
           <div className="flex justify-between items-center gap-2 w-full lg:px-2">
             {/* logo  */}
@@ -197,7 +202,8 @@ const MainHeader = () => {
                         className={({ isActive }) =>
                           `${isActive ? "text-teal-600" : ""} capitalize`
                         }
-                        to={item.link as string}
+                        to={item.link}
+                        end={item.link === "/"}
                       >
                         {item.label}
                       </NavLink>
@@ -233,7 +239,7 @@ const MainHeader = () => {
                   </button>
                 </Link>
                 <Link
-                  to="Login"> <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
+                  to="/login"> <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
                     <p
                       className="text-white font-medium text-md  group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-emerald-400 group-hover:to-teal-600 transition-all duration-300"
                     >
@@ -299,15 +305,29 @@ const MainHeader = () => {
                             className={`py-2 ${indexofMobileMenu === index ? null : "border-b-2 border-slate-300"} w-full flex items-end`}
                           >
                             {(item?.children?.length as number) > 0 ? (
-                              <div
-                                onClick={() =>
-                                  setIndexOfMobileMenu(
-                                    indexofMobileMenu === index ? null : index,
-                                  )
-                                }
-                                className="font-medium capitalize cursor-pointer"
-                              >
-                                {item.label}
+                              <div className="flex w-full items-center justify-between gap-2">
+                                <NavLink
+                                  to={item.link}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className="font-medium capitalize text-teal-700 hover:underline"
+                                >
+                                  {item.label}
+                                </NavLink>
+                                <button
+                                  type="button"
+                                  aria-label="Toggle submenu"
+                                  onClick={() =>
+                                    setIndexOfMobileMenu(
+                                      indexofMobileMenu === index ? null : index,
+                                    )
+                                  }
+                                  className="font-medium capitalize cursor-pointer p-2"
+                                >
+                                  <ChevronDown
+                                    strokeWidth={1.5}
+                                    className={`w-5 h-5 ${indexofMobileMenu === index ? "rotate-180" : ""} transform transition-normal duration-300`}
+                                  />
+                                </button>
                               </div>
                             ) : (
                               <NavLink
@@ -319,15 +339,12 @@ const MainHeader = () => {
                                 {item.label}
                               </NavLink>
                             )}
-                            {item.isExpanded && (
-                              <ChevronDown
-                                strokeWidth={1.5}
-                                className={`w-5 h-5 ${indexofMobileMenu === index ? "rotate-180" : ""} transform transition-normal duration-300`}
-                              />
-                            )}
                           </li>
                           {indexofMobileMenu === index && (
-                            <Big_MobileMenu item={item} />
+                            <Big_MobileMenu
+                              item={item}
+                              onNavigate={() => setIsMobileMenuOpen(false)}
+                            />
                           )}
                         </React.Fragment>
                       ))}

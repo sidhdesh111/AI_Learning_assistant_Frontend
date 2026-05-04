@@ -2,6 +2,13 @@ import { ArrowRight, Check } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 
+type MenuChild = {
+  label: string;
+  desc: string;
+  slug?: string;
+  to?: string;
+};
+
 type BigMenutype = {
   handleMouseLeave: () => void;
   handleHoverBigMenu: (index: number) => void;
@@ -16,13 +23,16 @@ type BigMenutype = {
         label: string;
         isExpanded: boolean;
         link: string;
-        children: {
-          label: string;
-          desc: string;
-        }[];
+        children: MenuChild[];
       };
   index: number | null;
 };
+
+function childHref(item: BigMenutype["item"], child: MenuChild): string {
+  if (child.to) return child.to;
+  if (child.slug) return `${item.link}#${child.slug}`;
+  return item.link;
+}
 
 const Big_Menu = ({
   index,
@@ -39,8 +49,9 @@ const Big_Menu = ({
       <div className="grid grid-cols-2 items-start gap-2">
         <div className="flex flex-col justify-between gap-3">
           {item.children?.map((child, index) => (
-            <div
+            <Link
               key={index}
+              to={childHref(item, child)}
               className="border-2 border-emerald-700/20 p-4 rounded-lg flex items-center gap-4 hover:border-emerald-700 transition-all duration-500 cursor-pointer"
             >
               <div className=" p-2 bg-emerald-300/40 rounded-md">
@@ -50,11 +61,11 @@ const Big_Menu = ({
                 <h2 className="text-md text-start font-medium text-slate-900 capitalize">
                   {child.label}
                 </h2>
-                <p className="text-[1rem] font-medium leading-6 text-slate-500 tracking-tight">
+                <p className="text-[1rem] text-left font-medium leading-6 text-slate-500 tracking-tight">
                   {child.desc}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         <div className="p-4 min-h-[60vh] h-full self-start bg-linear-to-tl from-emerald-700 to-teal-600 rounded-xl">

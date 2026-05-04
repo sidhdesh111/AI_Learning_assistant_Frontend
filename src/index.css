@@ -55,3 +55,24 @@ body {
     -ms-transform: scale(1.4);
     -o-transform: scale(1.4);
 }
+
+.my_testimonial .swiper-pagination-horizontal {
+
+    bottom: 3rem !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #cffff7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ae91;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #006352;
+}

@@ -80,7 +80,7 @@ const QuizResultpage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto" data-aos="fade-up" data-aos-duration="700">
       <div>
         <Link
           to={`/documents/${quiz.documentId}`}

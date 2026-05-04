@@ -96,7 +96,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div>
+    <div data-aos="fade-up" data-aos-duration="650">
       <PageHeader title="Profile Settings" />
       <div className="space-y-8">
         {/* User Information Display  */}

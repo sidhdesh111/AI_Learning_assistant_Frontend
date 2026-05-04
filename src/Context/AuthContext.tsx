@@ -17,12 +17,12 @@ import { API_PATHS } from "../Utils/ApiPaths";
 
 type User =
   | {
-      id: string;
-      name: string;
-      email: string;
-      username: string;
-      profilePicture?: string | undefined;
-    }
+    id: string;
+    name: string;
+    email: string;
+    username: string;
+    profilePicture?: string | undefined;
+  }
   | undefined;
 
 type AuthContextType = {
@@ -85,13 +85,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // Store tokens using token manager
       setTokens(accessToken, refreshToken);
-      
+
       // Store user data
       localStorage.setItem("user", JSON.stringify(userData));
-      
+
       setUser(userData);
       setIsAuthenticated(true);
-      
+
       console.log("[Auth] User logged in successfully");
     } catch (error) {
       console.error("Login failed:", error);
@@ -111,15 +111,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } catch (error) {
         console.warn("Backend logout notification failed (non-critical):", error);
       }
-      
+
       // Clear local tokens and user data
       clearTokens();
       localStorage.removeItem("user");
-      
+
       toast.success("Logged out successfully");
       setUser(null);
       setIsAuthenticated(false);
-      
+
       console.log("[Auth] User logged out");
     } catch (error) {
       console.error("Logout error:", error);
@@ -151,7 +151,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // The axios interceptor will handle the refresh automatically
       // This is a manual trigger that validates token status
       const hasTokens = hasValidTokens();
-      
+
       if (!hasTokens) {
         toast.error("Please login again");
         await logout();

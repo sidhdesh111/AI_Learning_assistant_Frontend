@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "aos/dist/aos.css";
 import { RouterProvider } from "react-router-dom";
 import { Router } from "./Router/Route.tsx";
 import { AuthProvider } from "./Context/AuthContext.tsx";

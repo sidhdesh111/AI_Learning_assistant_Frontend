@@ -109,7 +109,7 @@ const Testimonial = () => {
             >
 
                 {testimonialData.map((data, index) => (
-                    <SwiperSlide key={index} className='p-4 '>
+                    <SwiperSlide key={index} className='lg:p-4 '>
                         <div className='p-6 bg-white rounded-2xl shadow-lg'>
                             <div className='flex items-center gap-2 '>
                                 <div className="w-15 h-15 rounded-full overflow-hidden">

@@ -58,6 +58,8 @@ const FlashcardPage = (props: flashcardPageProps) => {
     <div
       onClick={handleStudyNow}
       className="group relative bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-5 hover:border-slate-300/60 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1.5"
+      data-aos="fade-up"
+      data-aos-duration="600"
     >
       <div>
         <div className="flex items-start justify-between gap-3 mb-4">

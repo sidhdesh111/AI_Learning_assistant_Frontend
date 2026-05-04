@@ -52,7 +52,7 @@ const DocumentDetailPage = () => {
       return filePath;
     }
 
-    const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
+    const baseUrl = import.meta.env.VITE_BASE_URL || "https://ailearningserver.naranexus.com/";
 
     return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
   };

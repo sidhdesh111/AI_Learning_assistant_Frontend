@@ -9,8 +9,13 @@ export interface LoginType {
 export interface LoginResponse {
   success: boolean;
   message: string;
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  token?: string;
+  tokens?: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
   user?: {
     id: string;
     username: string;

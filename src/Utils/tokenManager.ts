@@ -15,7 +15,13 @@ const TOKEN_KEYS = {
  */
 export const decodeToken = (token: string): any => {
   try {
+    if (!token || typeof token !== "string" || !token.includes(".")) {
+      return null;
+    }
     const base64Url = token.split(".")[1];
+    if (!base64Url) {
+      return null;
+    }
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
@@ -63,7 +69,21 @@ export const isTokenExpiringSoon = (token: string): boolean => {
 /**
  * Store tokens in localStorage
  */
+const isLikelyJwt = (token: string): boolean => {
+  return typeof token === "string" && token.split(".").length === 3;
+};
+
 export const setTokens = (accessToken: string, refreshToken: string): void => {
+  if (!isLikelyJwt(accessToken) || !isLikelyJwt(refreshToken)) {
+    console.error("[Token Manager] Invalid token format received", {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      accessTokenLength: accessToken?.length,
+      refreshTokenLength: refreshToken?.length,
+    });
+    throw new Error("Invalid authentication tokens received");
+  }
+
   localStorage.setItem(TOKEN_KEYS.ACCESS_TOKEN, accessToken);
   localStorage.setItem(TOKEN_KEYS.REFRESH_TOKEN, refreshToken);
   

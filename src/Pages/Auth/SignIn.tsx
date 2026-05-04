@@ -14,8 +14,13 @@ import Spin_loader from "../../Components/Loader/Spin_loader";
 interface ResponseData {
   success: boolean;
   message: string;
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  token?: string;
+  tokens?: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
   user?:
     | {
         id: string;
@@ -27,6 +32,13 @@ interface ResponseData {
     | undefined;
   statusCode: number;
 }
+
+const extractTokens = (response: ResponseData) => {
+  const accessToken = response.accessToken || response.token || response.tokens?.accessToken;
+  const refreshToken = response.refreshToken || response.tokens?.refreshToken;
+
+  return { accessToken, refreshToken };
+};
 
 const SignIn = () => {
   // const saveSettings = (success: boolean): Promise<void> => {
@@ -64,9 +76,17 @@ const SignIn = () => {
       const response: ResponseData = await loginAPI(email, password);
       console.log("Login response:", response);
       if (response.success) {
+        const { accessToken, refreshToken } = extractTokens(response);
+
+        if (!accessToken || !refreshToken) {
+          throw new Error(
+            "Login succeeded but tokens are missing in response. Please check backend login response format."
+          );
+        }
+
         toast.success("Login successful!");
         // Pass both access and refresh tokens to login
-        login(response?.user, response.accessToken, response.refreshToken);
+        login(response?.user, accessToken, refreshToken);
         navigate("/dashboard");
       }
     } catch (error: any) {

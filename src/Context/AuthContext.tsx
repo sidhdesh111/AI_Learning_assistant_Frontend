@@ -6,7 +6,6 @@ import {
   type ReactNode,
 } from "react";
 import toast from "react-hot-toast";
-import { setTokens, clearTokens, hasValidTokens } from "../Utils/tokenManager";
 import axiosInstance from "../Utils/axiosInstance";
 import { API_PATHS } from "../Utils/ApiPaths";
 
@@ -24,7 +23,7 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (userData: User, accessToken: string, refreshToken: string) => void;
+  login: (userData: User, accessToken?: string, refreshToken?: string) => void;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   checkAuthStatus: () => Promise<void>;
@@ -52,15 +51,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuthStatus = async () => {
     try {
       const userStr = localStorage.getItem("user");
-      const hasTokens = hasValidTokens();
 
-      if (userStr && hasTokens) {
+      if (userStr) {
+        // Validate active session from backend (cookie or bearer token).
+        await axiosInstance.get(API_PATHS.AUTH.GET_PROFILE);
         const userData: User = JSON.parse(userStr);
         setUser(userData);
         setIsAuthenticated(true);
       } else {
-        // Clear invalid tokens
-        clearTokens();
         setUser(null);
         setIsAuthenticated(false);
       }
@@ -76,10 +74,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    * Login with tokens
    * Stores both access and refresh tokens using token manager
    */
-  const login = (userData: User, accessToken: string, refreshToken: string) => {
+  const login = (userData: User, accessToken?: string, refreshToken?: string) => {
     try {
-      // Store tokens using token manager
-      setTokens(accessToken, refreshToken);
+      // If backend returns bearer tokens, store them for fallback auth mode.
+      if (accessToken && refreshToken) {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+      }
 
       // Store user data
       localStorage.setItem("user", JSON.stringify(userData));
@@ -108,7 +109,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       // Clear local tokens and user data
-      clearTokens();
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("tokenExpiry");
       localStorage.removeItem("user");
 
       toast.success("Logged out successfully");
@@ -119,7 +122,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       console.error("Logout error:", error);
       // Force clear even if backend call fails
-      clearTokens();
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("tokenExpiry");
       localStorage.removeItem("user");
       setUser(null);
       setIsAuthenticated(false);
@@ -145,13 +150,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // The axios interceptor will handle the refresh automatically
       // This is a manual trigger that validates token status
-      const hasTokens = hasValidTokens();
-
-      if (!hasTokens) {
+      const response = await axiosInstance.post(API_PATHS.AUTH.REFRESH_TOKEN);
+      if (response?.data?.success) {
+        toast.success("Tokens are valid");
+      } else {
         toast.error("Please login again");
         await logout();
-      } else {
-        toast.success("Tokens are valid");
       }
     } catch (error) {
       console.error("Manual token refresh failed:", error);

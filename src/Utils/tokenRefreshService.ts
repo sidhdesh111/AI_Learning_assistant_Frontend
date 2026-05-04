@@ -5,27 +5,27 @@
 
 import axios from "axios";
 import { API_PATHS } from "./ApiPaths";
-import { getRefreshToken, setTokens, clearTokens } from "./tokenManager";
+import { clearTokens } from "./tokenManager";
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 // Flag to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: (() => void)[] = [];
 
 /**
  * Subscribe to token refresh completion
  * This prevents race conditions when multiple requests fail with 401
  */
-const subscribeTokenRefresh = (callback: (token: string) => void) => {
+const subscribeTokenRefresh = (callback: () => void) => {
   refreshSubscribers.push(callback);
 };
 
 /**
  * Notify all subscribers that token has been refreshed
  */
-const notifyTokenRefresh = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token));
+const notifyTokenRefresh = () => {
+  refreshSubscribers.forEach((callback) => callback());
   refreshSubscribers = [];
 };
 
@@ -34,39 +34,20 @@ const notifyTokenRefresh = (token: string) => {
  * Implements token rotation with automatic retry logic
  */
 export const refreshAccessToken = async (): Promise<{
-  accessToken: string;
-  refreshToken: string;
+  success: boolean;
 } | null> => {
-  const refreshToken = getRefreshToken();
-
-  if (!refreshToken) {
-    console.warn("No refresh token available");
-    return null;
-  }
-
   try {
-    // Create a new axios instance to avoid interceptor loop
+    // Backend reads refresh token from httpOnly cookie.
     const refreshAxios = axios.create({
       baseURL: API_URL,
       timeout: 8000,
+      withCredentials: true,
     });
 
-    const response = await refreshAxios.post(API_PATHS.AUTH.REFRESH_TOKEN, {
-      refreshToken,
-    });
-
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-      response.data;
-
-    if (newAccessToken && newRefreshToken) {
-      // Store new tokens
-      setTokens(newAccessToken, newRefreshToken);
-
+    const response = await refreshAxios.post(API_PATHS.AUTH.REFRESH_TOKEN);
+    if (response?.data?.success) {
       console.log("Token refreshed successfully");
-      return {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      };
+      return { success: true };
     }
 
     return null;
@@ -113,8 +94,7 @@ export const handleTokenRefresh = (error: any): Promise<any> => {
   // Already refreshing
   if (isRefreshing) {
     return new Promise((resolve, _reject) => {
-      subscribeTokenRefresh((token: string) => {
-        config.headers.Authorization = `Bearer ${token}`;
+      subscribeTokenRefresh(() => {
         resolve(axios(config));
       });
     }).catch(() => {
@@ -131,12 +111,9 @@ export const handleTokenRefresh = (error: any): Promise<any> => {
     .then((result) => {
       isRefreshing = false;
 
-      if (result?.accessToken) {
-        // Update failed request with new token
-        config.headers.Authorization = `Bearer ${result.accessToken}`;
-
+      if (result?.success) {
         // Notify other pending requests
-        notifyTokenRefresh(result.accessToken);
+        notifyTokenRefresh();
 
         // Retry the original request
         return axios(config);

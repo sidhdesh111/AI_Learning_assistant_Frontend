@@ -78,14 +78,8 @@ const SignIn = () => {
       if (response.success) {
         const { accessToken, refreshToken } = extractTokens(response);
 
-        if (!accessToken || !refreshToken) {
-          throw new Error(
-            "Login succeeded but tokens are missing in response. Please check backend login response format."
-          );
-        }
-
         toast.success("Login successful!");
-        // Pass both access and refresh tokens to login
+        // Pass bearer tokens when available; cookie-based auth works without them.
         login(response?.user, accessToken, refreshToken);
         navigate("/dashboard");
       }

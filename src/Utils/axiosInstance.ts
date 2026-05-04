@@ -4,12 +4,14 @@ import axios, {
 } from "axios";
 import { getAccessToken, isTokenExpiringSoon } from "./tokenManager";
 import { handleTokenRefresh } from "./tokenRefreshService";
+import { API_PATHS } from "./ApiPaths";
 
 const URL: string = import.meta.env.VITE_BASE_URL;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: URL,
   timeout: 30000,
+  withCredentials: true,
 });
 
 /**
@@ -34,11 +36,6 @@ axiosInstance.interceptors.request.use(
       if (isTokenExpiringSoon(accessToken)) {
         console.warn("[Token Manager] Access token expiring soon, will refresh on next request");
       }
-    } else {
-      console.warn("[Axios] No access token found in storage", {
-        method: config.method,
-        url: config.url,
-      });
     }
 
     // For FormData, don't set Content-Type header
@@ -67,6 +64,13 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       // Handle 401 Unauthorized - attempt token refresh
       if (error.response.status === 401 && error.config) {
+        const requestUrl = error.config?.url || "";
+        if (
+          requestUrl.includes(API_PATHS.AUTH.LOGIN) ||
+          requestUrl.includes(API_PATHS.AUTH.REFRESH_TOKEN)
+        ) {
+          return Promise.reject(error);
+        }
         console.warn("[Token Manager] 401 Unauthorized - Attempting token refresh...");
         return handleTokenRefresh(error);
       }

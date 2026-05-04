@@ -13,5 +13,5 @@ export function ensureAOSInitialized(): void {
 /** Recalculate positions (call after SPA navigation or layout changes). */
 export function refreshAOS(): void {
   ensureAOSInitialized();
-  AOS.refresh();
+  AOS.refreshHard();
 }

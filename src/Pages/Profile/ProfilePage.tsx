@@ -8,7 +8,6 @@ import {
   Mail,
   Smile,
   User,
-  User2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { changePassword, getProfile } from "../../Services/authServices";
@@ -96,7 +95,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div data-aos="fade-up" data-aos-duration="650">
+    <div
+      data-aos="fade-up"
+      data-aos-duration="650"
+      className={loading ? "opacity-60 pointer-events-none" : ""}
+    >
       <PageHeader title="Profile Settings" />
       <div className="space-y-8">
         {/* User Information Display  */}

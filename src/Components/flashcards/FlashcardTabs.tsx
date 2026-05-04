@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import Modal from "../common/Modal";
-import Flashcard from "./Flashcard";
+import FlashcardView from "./Flashcard";
 
 type FlashcardPropsType = {
   documentId: string | undefined;
@@ -202,7 +202,7 @@ const FlashcardTabs = (props: FlashcardPropsType) => {
 
         <div className="flex flex-col items-center space-y-8">
           <div className="w-full max-w-2xl">
-            <Flashcard
+            <FlashcardView
               flashcard={currentCard}
               onToggleStar={handleToggleStar}
             />

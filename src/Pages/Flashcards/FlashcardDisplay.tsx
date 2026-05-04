@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import type { FlashcardSet } from "../../types/FlashcardType";
-import Flashcard from "../../Components/flashcards/Flashcard";
+import FlashcardView from "../../Components/flashcards/Flashcard";
 import { reviewFlashcard, getFlashcardSetById, toggleFlashcardStar } from "../../Services/flashcardServices";
 import toast from "react-hot-toast";
 import Spin_loader from "../../Components/Loader/Spin_loader";
@@ -78,10 +78,10 @@ const FlashcardDisplay = () => {
 
   const currentCard = selectedSet.cards[currentCardIndex];
 
-  const handleReview = async (index: number) => {
+  const handleReview = async () => {
     setIsReviewing(true);
     try {
-      await reviewFlashcard(currentCard._id, index);
+      await reviewFlashcard(currentCard._id, true);
       toast.success("Flashcard reviewed!");
     } catch (error) {
       toast.error("Failed to review flashcard.");
@@ -92,7 +92,7 @@ const FlashcardDisplay = () => {
 
   const handleNextCard = async () => {
     if (selectedSet) {
-      await handleReview(currentCardIndex);
+      await handleReview();
       setCurrentCardIndex(
         (prevIndex) => (prevIndex + 1) % selectedSet.cards.length,
       );
@@ -101,7 +101,7 @@ const FlashcardDisplay = () => {
 
   const handlePrevCard = async () => {
     if (selectedSet) {
-      await handleReview(currentCardIndex);
+      await handleReview();
       setCurrentCardIndex(
         (prevIndex) =>
           (prevIndex - 1 + selectedSet.cards.length) % selectedSet.cards.length,
@@ -129,7 +129,7 @@ const FlashcardDisplay = () => {
 
         <div className="flex flex-col items-center space-y-8">
           <div className="w-full max-w-2xl">
-            <Flashcard flashcard={currentCard} onToggleStar={handleToggleStar} />
+            <FlashcardView flashcard={currentCard} onToggleStar={handleToggleStar} />
           </div>
 
           <div className="flex items-center gap-6">

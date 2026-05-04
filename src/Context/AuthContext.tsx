@@ -6,12 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import toast from "react-hot-toast";
-import {
-  setTokens,
-  getAccessToken,
-  clearTokens,
-  hasValidTokens,
-} from "../Utils/tokenManager";
+import { setTokens, clearTokens, hasValidTokens } from "../Utils/tokenManager";
 import axiosInstance from "../Utils/axiosInstance";
 import { API_PATHS } from "../Utils/ApiPaths";
 

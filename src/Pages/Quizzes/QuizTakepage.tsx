@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { Quiz } from "../../types/AIServiesTypes";
+import type { Quiz } from "../../types/QuizTypes";
 import { getQuizById, submitQuiz } from "../../Services/quizServices";
 import toast from "react-hot-toast";
 import Spin_loader from "../../Components/Loader/Spin_loader";
@@ -14,10 +14,13 @@ const QuizTakepage = () => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSeletedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, number>
+  >({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!quizId) return;
     const fetchQuiz = async () => {
       setLoading(true);
       try {
@@ -31,18 +34,19 @@ const QuizTakepage = () => {
         setLoading(false);
       }
     };
-    fetchQuiz();
+    void fetchQuiz();
   }, [quizId]);
 
-  const handleOptionChange = (questionId: string, optionIndex: number) => {
-    setSeletedAnswers((prev) => ({
+  const handleOptionChange = (questionIndex: number, optionIndex: number) => {
+    setSelectedAnswers((prev) => ({
       ...prev,
-      [questionId]: optionIndex,
+      [questionIndex]: optionIndex,
     }));
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < quiz?.questions.length - 1) {
+    const len = quiz?.questions?.length ?? 0;
+    if (currentQuestionIndex < len - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
@@ -54,17 +58,15 @@ const QuizTakepage = () => {
   };
 
   const handleSubmitQuiz = async () => {
+    if (!quizId || !quiz) return;
     setSubmitting(true);
     try {
-      const formattedAnswers = Object.keys(selectedAnswers).map(
-        (questionId) => {
-          const question = quiz?.questions.find((q) => q._id === questionId);
-          const questionIndex = quiz?.questions.findIndex(
-            (q) => q._id === questionId,
-          );
-          const optionIndex = selectedAnswers[questionId];
-          const selectedOption = question?.options[optionIndex];
-          return { questionIndex, selectedOption };
+      const formattedAnswers = Object.entries(selectedAnswers).map(
+        ([qiStr, optionIndex]) => {
+          const qi = Number(qiStr);
+          const selectedAnswer =
+            quiz.questions[qi]?.options[optionIndex] ?? "";
+          return { questionIndex: qi, selectedAnswer };
         },
       );
 
@@ -88,7 +90,7 @@ const QuizTakepage = () => {
     );
   }
 
-  if (!quiz || quiz.questions.length === 0) {
+  if (!quiz || !quiz.questions || quiz.questions.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
@@ -101,8 +103,8 @@ const QuizTakepage = () => {
   }
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
-  const isAnswered = selectedAnswers.hasOwnProperty(currentQuestion._id);
   const answeredCount = Object.keys(selectedAnswers).length;
+  const qLen = quiz.questions.length;
 
   return (
     <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-duration="650">
@@ -111,7 +113,7 @@ const QuizTakepage = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold text-slate-800">
-            Question {currentQuestionIndex + 1} of {quiz.questions.length}
+            Question {currentQuestionIndex + 1} of {qLen}
           </span>
           <span className="text-sm font-medium text-slate-500">
             {answeredCount} answered
@@ -121,7 +123,7 @@ const QuizTakepage = () => {
           <div
             className=" absolute inset-y-0 left-0 bg-linear-to-r from-emerald-500 to-teal-600 rounded-full transition-all duration-300 ease-out"
             style={{
-              width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%`,
+              width: `${((currentQuestionIndex + 1) / qLen) * 100}%`,
             }}
           />
         </div>
@@ -139,7 +141,8 @@ const QuizTakepage = () => {
 
         <div className="space-y-4">
           {currentQuestion.options.map((option, index) => {
-            const isSelected = selectedAnswers[currentQuestion._id] === index;
+            const isSelected =
+              selectedAnswers[currentQuestionIndex] === index;
             return (
               <label
                 key={index}
@@ -152,11 +155,11 @@ const QuizTakepage = () => {
               >
                 <input
                   type="radio"
-                  name={`question-${currentQuestion._id}`}
+                  name={`question-${currentQuestionIndex}`}
                   value={index}
                   checked={isSelected}
                   onChange={() =>
-                    handleOptionChange(currentQuestion._id, index)
+                    handleOptionChange(currentQuestionIndex, index)
                   }
                   className="sr-only"
                 />
@@ -203,7 +206,7 @@ const QuizTakepage = () => {
           Previous
         </Button>
 
-        {currentQuestionIndex === quiz.questions.length - 1 ? (
+        {currentQuestionIndex === qLen - 1 ? (
           <button
             onClick={handleSubmitQuiz}
             disabled={submitting}
@@ -224,7 +227,7 @@ const QuizTakepage = () => {
                 </>
               )}{" "}
             </span>
-            <div className=" absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:trnaslate-x-full transition-transform duration-300" />
+            <div className=" absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-300" />
           </button>
         ) : (
           <Button onClick={handleNextQuestion} disabled={submitting}>
@@ -236,13 +239,15 @@ const QuizTakepage = () => {
       {/* Question Navigate Dots  */}
       <div className="mt-0 flex items-center justify-center gap-2 flex-wrap">
         {quiz.questions.map((_, index) => {
-          const isAnsweredQuestion = selectedAnswers.hasOwnProperty(
-            quiz.questions[index]._id,
+          const isAnsweredQuestion = Object.prototype.hasOwnProperty.call(
+            selectedAnswers,
+            index,
           );
           const isCurrent = index === currentQuestionIndex;
           return (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrentQuestionIndex(index)}
               disabled={submitting}
               className={`w-8 h-8 rounded-xl font-semibold text-xs transition-all duration-300 ${

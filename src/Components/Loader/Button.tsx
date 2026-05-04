@@ -1,4 +1,4 @@
-import React, { type MouseEventHandler, type ReactNode } from "react";
+import { type MouseEventHandler, type ReactNode } from "react";
 type ButtonVariant = "primary" | "secondary" | "outline";
 type ButtonSize = "sm" | "md";
 
@@ -41,9 +41,9 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={[baseStyles, variantStyles[variant], sizeStyles[size]].join(
-        " ",
-      )}
+      className={[baseStyles, variantStyles[variant], sizeStyles[size], className]
+        .filter(Boolean)
+        .join(" ")}
     >
       {children}
     </button>

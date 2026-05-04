@@ -3,7 +3,10 @@ import { Link, useParams } from "react-router";
 import { getQuizResults } from "../../Services/quizServices";
 import toast from "react-hot-toast";
 import Spin_loader from "../../Components/Loader/Spin_loader";
-import type { Quiz } from "../../types/AIServiesTypes";
+import type {
+  DetailedResult,
+  GetQuizResultsResponse,
+} from "../../types/QuizTypes";
 import {
   ArrowLeft,
   BookOpen,
@@ -17,7 +20,7 @@ import PageHeader from "../../Components/common/PageHeader";
 const QuizResultpage = () => {
   const { quizId } = useParams();
 
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<GetQuizResultsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,16 +64,18 @@ const QuizResultpage = () => {
 
   const score = quiz.score;
   const totalQestions = detailedResults.length;
-  const correctAnswers = detailedResults.filter((r) => r.isCorrect).length;
+  const correctAnswers = detailedResults.filter(
+    (r: DetailedResult) => r.isCorrect,
+  ).length;
   const incorrectAnswers = totalQestions - correctAnswers;
 
-  const getScoreColor = (score) => {
+  const getScoreColor = (score: number) => {
     if (score >= 80) return "from-emerald-500 to-teal-500";
     if (score >= 60) return "from-amber-500 to-orange-500";
     return "from-rose-500 to-red-500";
   };
 
-  const getScoreMessage = (score) => {
+  const getScoreMessage = (score: number) => {
     if (score >= 90) return "Outstanding! ";
     if (score >= 80) return "Great Job! ";
     if (score >= 70) return "Good Work! ";
@@ -150,13 +155,15 @@ const QuizResultpage = () => {
             Detailed Review
           </h3>
         </div>
-        {detailedResults.map((result, index) => {
+        {detailedResults.map((result: DetailedResult, index: number) => {
           const userAnswerIndex = result.options.findIndex(
-            (opt) => opt === result.selectedAnswer,
+            (opt: string) => opt === result.selectedAnswer,
           );
           const correctAnswerIndex = result.correctAnswer.startsWith("0")
-            ? parseInt(result.correctAnswer.substring(1)) - 1
-            : result.options.findIndex((opt) => opt === result.correctAnswer);
+            ? parseInt(result.correctAnswer.substring(1), 10) - 1
+            : result.options.findIndex(
+                (opt: string) => opt === result.correctAnswer,
+              );
           const isCorrect = result.isCorrect;
 
           return (
@@ -196,7 +203,7 @@ const QuizResultpage = () => {
                 </div>
               </div>
               <div className="space-y-3 mb-4">
-                {result.options.map((option, optIndex) => {
+                {result.options.map((option: string, optIndex: number) => {
                   const isCorrectOption = optIndex === correctAnswerIndex;
                   const isUserAnswer = optIndex === userAnswerIndex;
                   const isWrongAnswer = isUserAnswer && !isCorrect;

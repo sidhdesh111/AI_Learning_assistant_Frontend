@@ -1,10 +1,8 @@
 import { BrainCircuit } from "lucide-react";
-import React from "react";
 import {
   FaFacebook,
   FaInstagram,
   FaLinkedin,
-  FaYoutube,
 } from "react-icons/fa6";
 import { TbBrandYoutube } from "react-icons/tb";
 import { Link } from "react-router";

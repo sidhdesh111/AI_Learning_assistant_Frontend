@@ -1,5 +1,3 @@
-import React, { useLayoutEffect } from "react";
-
 const Spin_loader = ({
   width = 10,
   height = 10,

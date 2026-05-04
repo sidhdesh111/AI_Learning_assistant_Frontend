@@ -1,5 +1,4 @@
 import { FileText, Plus } from "lucide-react";
-import React from "react";
 
 type EmptyProps = {
   title: string;

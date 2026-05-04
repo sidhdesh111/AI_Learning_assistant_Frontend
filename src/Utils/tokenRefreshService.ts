@@ -112,7 +112,7 @@ export const handleTokenRefresh = (error: any): Promise<any> => {
 
   // Already refreshing
   if (isRefreshing) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       subscribeTokenRefresh((token: string) => {
         config.headers.Authorization = `Bearer ${token}`;
         resolve(axios(config));

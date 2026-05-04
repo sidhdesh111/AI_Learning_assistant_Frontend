@@ -17,16 +17,6 @@ const FlashcardPage = (props: flashcardPageProps) => {
   }
 
   console.log(props.flashcard);
-  
-
-  // Handle both string and DocumentRef types for documentId
-  const getDocumentId = (): string => {
-    const docId = props.flashcard!.documentId;
-    if (typeof docId === "string") {
-      return docId;
-    }
-    return (docId as DocumentRef)._id;
-  };
 
   const getDocumentTitle = (): string => {
     const docId = props.flashcard!.documentId;

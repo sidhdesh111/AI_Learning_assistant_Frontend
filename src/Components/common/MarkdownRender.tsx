@@ -1,11 +1,65 @@
-import React from "react";
+import type { CSSProperties, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 type MarkdownRenderProps = {
   content: string;
+};
+
+type MarkdownCodeProps = {
+  inline?: boolean;
+  className?: string;
+  children?: ReactNode;
+};
+
+const MarkdownCode = ({
+  inline,
+  className,
+  children,
+  ...props
+}: MarkdownCodeProps & Record<string, unknown>) => {
+  try {
+    const match = /language-(\w+)/.exec(className || "");
+    const codeString = Array.isArray(children)
+      ? children.join("")
+      : String(children || "");
+
+    if (!inline && match) {
+      return (
+        <SyntaxHighlighter
+          style={dracula as Record<string, CSSProperties>}
+          language={match[1]}
+          PreTag="div"
+          {...(props as object)}
+        >
+          {codeString.replace(/\n$/, "")}
+        </SyntaxHighlighter>
+      );
+    }
+
+    return (
+      <code
+        className="bg-neutral-100 p-1 rounded font-mono text-sm"
+        {...(props as object)}
+      >
+        {codeString}
+      </code>
+    );
+  } catch (error) {
+    console.error("Error rendering code block:", error);
+    return (
+      <code className="bg-neutral-100 text-amber-600 p-1 rounded font-mono text-sm">
+        {children}
+      </code>
+    );
+  }
+};
+
+const markdownComponents: Partial<Components> = {
+  code: MarkdownCode as NonNullable<Components["code"]>,
 };
 
 const MarkdownRender = ({ content }: MarkdownRenderProps) => {
@@ -18,6 +72,7 @@ const MarkdownRender = ({ content }: MarkdownRenderProps) => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          ...markdownComponents,
           h1: ({ ...props }) => (
             <h1 className="text-xl font-bold mt-4 mb-2" {...props} />
           ),
@@ -51,53 +106,6 @@ const MarkdownRender = ({ content }: MarkdownRenderProps) => {
               {...props}
             />
           ),
-          code : ({
-            inline,
-            className,
-            children,
-            ...props
-          }: {
-            inline?: boolean;
-            className?: string;
-            children: React.ReactNode;
-            [key: string]: unknown;
-          }) => {
-            try {
-              const match = /language-(\w+)/.exec(className || "");
-              const codeString = Array.isArray(children)
-                ? children.join("")
-                : String(children || "");
-
-              if (!inline && match) {
-                return (
-                  <SyntaxHighlighter
-                    style={dracula}
-                    language={match[1]}
-                    PreTag="div"
-                    {...props}
-                  >
-                    {codeString.replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                );
-              }
-
-              return (
-                <code
-                  className="bg-neutral-100 p-1 rounded font-mono text-sm"
-                  {...props}
-                >
-                  {codeString}
-                </code>
-              );
-            } catch (error) {
-              console.error("Error rendering code block:", error);
-              return (
-                <code className="bg-neutral-100 text-amber-600 p-1 rounded font-mono text-sm">
-                  {children}
-                </code>
-              );
-            }
-          },
           pre: ({ ...props }) => (
             <pre
               className="bg-neutral-800 text-white p-3 rounded-md font-mono text-sm overflow-x-auto my-4"

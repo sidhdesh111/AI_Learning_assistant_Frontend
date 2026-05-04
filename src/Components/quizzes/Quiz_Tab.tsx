@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import type { Quiz } from "../../types/AIServiesTypes";
-import { deleteQuiz, getQuizById, getQuizzesByDocId } from "../../Services/quizServices";
+import { useEffect, useState } from "react";
+import type { Quiz } from "../../types/QuizTypes";
+import { deleteQuiz, getQuizzesByDocId } from "../../Services/quizServices";
 import toast from "react-hot-toast";
 import { generateQuiz } from "../../Services/aiServices";
 import Button from "../Loader/Button";
@@ -12,13 +12,6 @@ import Modal from "../common/Modal";
 
 type QuizPropsType = {
   documentId: string | undefined;
-};
-
-type QuizResponse = {
-  success: boolean;
-  data: Quiz;
-  message?: string;
-  count?: number;
 };
 
 const Quiz_Tab = (props: QuizPropsType) => {

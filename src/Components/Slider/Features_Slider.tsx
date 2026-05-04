@@ -1,21 +1,15 @@
-
-import React, { useRef, useState } from 'react';
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
-import 'swiper/swiper.css';
-import 'swiper/css/navigation';
-
-
+import "swiper/swiper.css";
+import "swiper/css/navigation";
 
 // import required modules
-import { Navigation, Autoplay } from 'swiper/modules';
-import type { LucideProps } from 'lucide-react';
-
+import { Navigation, Autoplay } from "swiper/modules";
+import type { LucideIcon } from "lucide-react";
 
 type FeaturesData = {
-  Icons: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  Icons: LucideIcon;
   label: string;
   para: string;
   colorclass: string;

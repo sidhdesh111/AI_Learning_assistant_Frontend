@@ -1,4 +1,4 @@
-import { Lock, Pen, Share, Share2, UserStar, AArrowUp, Book, Brain, ChartBar, NotebookIcon, NotepadText, ArrowBigRight, ArrowRight } from "lucide-react";
+import { Lock, Pen, Share2, UserStar, AArrowUp, Brain, ChartBar, NotebookIcon, NotepadText, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import Features_Slider from "../../Components/Slider/Features_Slider";
 import { } from 'lucide-react';
@@ -314,9 +314,13 @@ const faqData = [
 
 ]
 
+type FeatureKey = (typeof FeturesData)[number]["key"];
+
 const Home = () => {
 
-  const [selectedFeature, setSelectedFeature] = useState({
+  const [selectedFeature, setSelectedFeature] = useState<
+    Record<FeatureKey, string>
+  >({
     PRA: "PRA-0",
     WA: "WA-0",
     CDA: "CDA-0",
@@ -457,13 +461,13 @@ const Home = () => {
                   <ul className="flex flex-col gap-4">
                     {
                       feature.children.map((featchild, i) => (
-                        <li key={`${feature.key}-${i}`} onClick={() => setSelectedFeature((prev) => ({ ...prev, [feature.key]: `${feature.key}-${i}` }))} className={`p-4 cursor-pointer rounded-lg transition-all duration-300 ${selectedFeature[feature.key] === feature.key + "-" + i ? `border-l-4 border-slate-600 bg-slate-100/50 shadow-md` : `hover:bg-slate-100/30 border-l-4 border-transparent hover:shadow-sm`}`}>
+                        <li key={`${feature.key}-${i}`} onClick={() => setSelectedFeature((prev) => ({ ...prev, [feature.key]: `${feature.key}-${i}` }))} className={`p-4 cursor-pointer rounded-lg transition-all duration-300 ${selectedFeature[feature.key as FeatureKey] === feature.key + "-" + i ? `border-l-4 border-slate-600 bg-slate-100/50 shadow-md` : `hover:bg-slate-100/30 border-l-4 border-transparent hover:shadow-sm`}`}>
                           <div className="flex flex-col gap-0.5">
-                            <h2 className={`text-lg transition-all duration-300 ${selectedFeature[feature.key] === feature.key + "-" + i ? `font-bold text-slate-900` : `font-medium text-slate-700 group-hover:text-slate-900`}`}>
+                            <h2 className={`text-lg transition-all duration-300 ${selectedFeature[feature.key as FeatureKey] === feature.key + "-" + i ? `font-bold text-slate-900` : `font-medium text-slate-700 group-hover:text-slate-900`}`}>
                               {featchild.label}
 
                             </h2>
-                            <p className={`text-sm font-medium transition-all duration-500 ease-in-out transform ${selectedFeature[feature.key] === feature.key + "-" + i ? `text-slate-600 opacity-100 max-h-20 visible` : `text-slate-500 opacity-0 max-h-0 hidden`}`}>
+                            <p className={`text-sm font-medium transition-all duration-500 ease-in-out transform ${selectedFeature[feature.key as FeatureKey] === feature.key + "-" + i ? `text-slate-600 opacity-100 max-h-20 visible` : `text-slate-500 opacity-0 max-h-0 hidden`}`}>
                               {featchild.para}
                             </p>
                           </div>
@@ -475,10 +479,10 @@ const Home = () => {
                 <div className={`p-10 rounded-md w-[70%] h-[32rem] ${feature.primarycolor}`}>
 
                   <img
-                    key={selectedFeature[feature.key]}
+                    key={selectedFeature[feature.key as FeatureKey]}
                     src={
                       feature.children.find(
-                        (_, i) => `${feature.key}-${i}` === selectedFeature[feature.key]
+                        (_, i) => `${feature.key}-${i}` === selectedFeature[feature.key as FeatureKey]
                       )?.img
                     }
                     alt=""

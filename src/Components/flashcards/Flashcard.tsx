@@ -7,7 +7,7 @@ type flascardPropsType = {
   onToggleStar?: (cardId: string) => void;
 };
 
-const Flashcard = (props: flascardPropsType) => {
+const FlashcardView = (props: flascardPropsType) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -108,4 +108,4 @@ const Flashcard = (props: flascardPropsType) => {
   );
 };
 
-export default Flashcard;
+export default FlashcardView;

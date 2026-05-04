@@ -1,5 +1,4 @@
-import React from "react";
-import type { Quiz } from "../../types/AIServiesTypes";
+import type { Quiz } from "../../types/QuizTypes";
 import { Award, BarChart2, Play, Trash2 } from "lucide-react";
 import moment from "moment";
 import { Link } from "react-router";
@@ -32,9 +31,12 @@ const QuizCard = (props: QuizCardType) => {
         <div>
           <h3 className="text-base font-semibold text-slate-900 mb-1 line-clamp-2" title={props.quiz.title}>
             {props.quiz.title ||
-              `Quiz - ${moment(props.quiz.createdAt).format("MMM D, YYYY")}`}
+              `Quiz - ${moment(props.quiz.createdAt ?? props.quiz.completedAt ?? Date.now()).format("MMM D, YYYY")}`}
           </h3>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Created {moment(props.quiz.createdAt).format("MMM D, YYYY")}</p>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            Created{" "}
+            {moment(props.quiz.createdAt ?? props.quiz.completedAt ?? Date.now()).format("MMM D, YYYY")}
+          </p>
         </div>
 
         <div className="flex items-center gap-3 pt-2 border-t border-slate-100">

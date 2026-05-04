@@ -223,22 +223,24 @@ const MainHeader = () => {
             {/* buttons  */}
             <div className=" hidden md:w-[40%] lg:w-[30%] md:flex justify-end">
               <div className="flex items-center justify-center gap-2">
-                <button className="px-4 py-1.5 border-2 border-transparent hover:border-emerald-500 rounded-lg transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 group">
-                  <Link
-                    to="register"
-                    className="text-gray-600 font-medium text-md group-hover:text-emerald-500 transition-colors duration-300"
-                  >
-                    Sign Up
-                  </Link>
-                </button>
-                <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
-                  <Link
-                    to="Login"
-                    className="text-white font-medium text-md  group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-emerald-400 group-hover:to-teal-600 transition-all duration-300"
-                  >
-                    Try For Free
-                  </Link>
-                </button>
+                <Link
+                  to="register"> <button className="px-4 py-1.5 border-2 border-transparent hover:border-emerald-500 rounded-lg transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 group">
+                    <p
+                      className="text-gray-600 font-medium text-md group-hover:text-emerald-500 transition-colors duration-300"
+                    >
+                      Sign Up
+                    </p>
+                  </button>
+                </Link>
+                <Link
+                  to="Login"> <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
+                    <p
+                      className="text-white font-medium text-md  group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-emerald-400 group-hover:to-teal-600 transition-all duration-300"
+                    >
+                      Try For Free
+                    </p>
+                  </button>
+                </Link>
               </div>
             </div>
             {/*  Mobile Menu Link  */}
@@ -257,9 +259,8 @@ const MainHeader = () => {
 
       {
         <div
-          className={`fixed inset-0 z-40 bg-slate-600/40 backdrop-blur-sm transition-opacity duration-1000 ${
-            isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`fixed inset-0 z-40 bg-slate-600/40 backdrop-blur-sm transition-opacity duration-1000 ${isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
         >
           <div
             className={`fixed top-0 right-0 z-70 transform transition-transform ease-in-out duration-1000 ${isMobileMenuOpen ? "translate-x-0" : "translate-x-[100vw]"} bg-white w-full md:w-[80%] min-h-screen`}

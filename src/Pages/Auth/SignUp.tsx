@@ -56,7 +56,7 @@ const SignUp = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 lg:p-0">
+    <div className="flex justify-center items-center min-h-screen p-4 lg:py-10">
       <div className="flex flex-col p-8 border-2 shadow-lg shadow-emerald-100/50 rounded-3xl border-gray-100 w-lg">
         <div className="text-center mb-4">
           <div className="border w-fit mx-auto my-4 p-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 text-white">

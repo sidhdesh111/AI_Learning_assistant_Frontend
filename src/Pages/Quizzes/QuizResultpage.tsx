@@ -84,6 +84,29 @@ const QuizResultpage = () => {
     return "Keep it Up! 💪💪👌";
   };
 
+  const getCorrectAnswerIndex = (
+    correctAnswer: string,
+    options: string[],
+  ): number => {
+    if (!correctAnswer) return -1;
+
+    const exactTextMatch = options.findIndex((opt: string) => opt === correctAnswer);
+    if (exactTextMatch !== -1) return exactTextMatch;
+
+    const upper = correctAnswer.trim().toUpperCase();
+    const letterMatch = upper.match(/\b([ABCD])\b/);
+    if (letterMatch) {
+      return ["A", "B", "C", "D"].indexOf(letterMatch[1]);
+    }
+
+    const numberMatch = upper.match(/\b0?([1-4])\b/);
+    if (numberMatch) {
+      return Number(numberMatch[1]) - 1;
+    }
+
+    return -1;
+  };
+
   return (
     <div className="max-w-5xl mx-auto" data-aos="fade-up" data-aos-duration="700">
       <div>
@@ -159,11 +182,10 @@ const QuizResultpage = () => {
           const userAnswerIndex = result.options.findIndex(
             (opt: string) => opt === result.selectedAnswer,
           );
-          const correctAnswerIndex = result.correctAnswer.startsWith("0")
-            ? parseInt(result.correctAnswer.substring(1), 10) - 1
-            : result.options.findIndex(
-                (opt: string) => opt === result.correctAnswer,
-              );
+          const correctAnswerIndex = getCorrectAnswerIndex(
+            result.correctAnswer,
+            result.options,
+          );
           const isCorrect = result.isCorrect;
 
           return (

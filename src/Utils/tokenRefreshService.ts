@@ -13,6 +13,8 @@ const API_URL = normalizeApiBaseUrl(import.meta.env.VITE_BASE_URL);
 // Flag to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;
 let refreshSubscribers: (() => void)[] = [];
+let lastRefreshFailureAt = 0;
+const REFRESH_RETRY_COOLDOWN_MS = 10_000;
 
 /**
  * Subscribe to token refresh completion
@@ -86,6 +88,11 @@ export const handleTokenRefresh = (error: any): Promise<any> => {
     return Promise.reject(error);
   }
 
+  // Circuit breaker: prevent refresh storms after a known recent failure.
+  if (Date.now() - lastRefreshFailureAt < REFRESH_RETRY_COOLDOWN_MS) {
+    return Promise.reject(error);
+  }
+
   // Prevent infinite loops by checking if we already tried to refresh
   if (config._retry) {
     clearTokens();
@@ -113,17 +120,20 @@ export const handleTokenRefresh = (error: any): Promise<any> => {
       isRefreshing = false;
 
       if (result?.success) {
+        lastRefreshFailureAt = 0;
         // Notify other pending requests
         notifyTokenRefresh();
 
         // Retry the original request
         return axios(config);
       } else {
+        lastRefreshFailureAt = Date.now();
         return Promise.reject(error);
       }
     })
     .catch((err) => {
       isRefreshing = false;
+      lastRefreshFailureAt = Date.now();
       clearTokens();
       return Promise.reject(err || error);
     });

@@ -68,7 +68,8 @@ axiosInstance.interceptors.response.use(
         const requestUrl = error.config?.url || "";
         if (
           requestUrl.includes(API_PATHS.AUTH.LOGIN) ||
-          requestUrl.includes(API_PATHS.AUTH.REFRESH_TOKEN)
+          requestUrl.includes(API_PATHS.AUTH.REFRESH_TOKEN) ||
+          requestUrl.includes(API_PATHS.AUTH.LOGOUT)
         ) {
           return Promise.reject(error);
         }

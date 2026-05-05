@@ -271,7 +271,7 @@ const MainHeader = () => {
           <div
             className={`fixed top-0 right-0 z-70 transform transition-transform ease-in-out duration-1000 ${isMobileMenuOpen ? "translate-x-0" : "translate-x-[100vw]"} bg-white w-full md:w-[80%] min-h-screen`}
           >
-            <div className="px-4">
+            <div className="px-4 flex flex-col justify-between items-stretch min-h-[100vh]">
               <div>
                 {/* top bar  */}
                 <div className="py-4 flex items-center justify-between border-b-2 border-slate-200">
@@ -351,6 +351,28 @@ const MainHeader = () => {
                     </ul>
                   </nav>
                 </div>
+              </div>
+              <div className="p-4 border-t-2 border-slate-300">
+              <div className="flex items-center justify-between">
+                <Link
+                  to="register"> <button className="px-4 py-1.5 border-2 border-transparent hover:border-emerald-500 rounded-lg transition-all duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 group">
+                    <p
+                      className="text-gray-600 font-medium text-md group-hover:text-emerald-500 transition-colors duration-300"
+                    >
+                      Sign Up
+                    </p>
+                  </button>
+                </Link>
+                <Link
+                  to="/login"> <button className="px-4 py-1.5 border-2 rounded-lg border-transparent hover:border-emerald-500 bg-linear-to-br from-emerald-400 to-teal-500 hover:from-white hover:to-slate-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 transition-all duration-300 group">
+                    <p
+                      className="text-white font-medium text-md  group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-emerald-400 group-hover:to-teal-600 transition-all duration-300"
+                    >
+                      Try For Free
+                    </p>
+                  </button>
+                </Link>
+              </div>
               </div>
             </div>
           </div>

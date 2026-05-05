@@ -12,6 +12,7 @@ import FlashcardTabs from "../../Components/flashcards/FlashcardTabs";
 import Quiz_Tab from "../../Components/quizzes/Quiz_Tab";
 import axiosInstance from "../../Utils/axiosInstance";
 import { API_PATHS } from "../../Utils/ApiPaths";
+import { resolvePdfLoadErrorMessage } from "../../Utils/resolvePdfLoadError";
 
 type DocumentResponseType = {
   data: DocumentWithMeta;
@@ -81,11 +82,9 @@ const DocumentPdfViewer = ({
         }
         objectUrl = URL.createObjectURL(data);
         setSrc(objectUrl);
-      } catch {
+      } catch (err) {
         if (!cancelled) {
-          setLoadError(
-            "Could not load the document. Check that the API is reachable and that the file still exists on the server.",
-          );
+          setLoadError(await resolvePdfLoadErrorMessage(err));
         }
       } finally {
         if (!cancelled) setPdfLoading(false);

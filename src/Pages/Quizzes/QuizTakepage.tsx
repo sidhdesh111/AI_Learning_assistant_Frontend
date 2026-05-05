@@ -64,9 +64,9 @@ const QuizTakepage = () => {
       const formattedAnswers = Object.entries(selectedAnswers).map(
         ([qiStr, optionIndex]) => {
           const qi = Number(qiStr);
-          const selectedAnswer =
+          const selectedOption =
             quiz.questions[qi]?.options[optionIndex] ?? "";
-          return { questionIndex: qi, selectedAnswer };
+          return { questionIndex: qi, selectedOption };
         },
       );
 

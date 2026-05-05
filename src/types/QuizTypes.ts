@@ -14,7 +14,7 @@ export type QuizQuestion = {
 // -----------------------------
 export type UserAnswer = {
   questionIndex: number;
-  selectedAnswer: string;
+  selectedOption: string;
   isCorrect: boolean;
   answeredAt: string; // ISO date string
 };
@@ -61,7 +61,7 @@ export interface GetQuizByIdResponse {
 export type SubmitQuizPayload = {
   answers: {
     questionIndex: number;
-    selectedAnswer: string;
+    selectedOption: string;
   }[];
 };
 

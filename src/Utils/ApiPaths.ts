@@ -12,6 +12,8 @@ export const API_PATHS = {
   DOCUMENTS: {
     UPLOAD: "/api/documents/upload",
     GET_DOCUMENTS: "/api/documents",
+    /** Authenticated PDF stream/redirect; use with axios + blob for the Content tab. */
+    GET_DOCUMENT_FILE: (id: string) => `/api/documents/${id}/file`,
     GET_DOCUMENT_BY_ID: (id: string) => `/api/documents/${id}`,
     UPDATE_DOCUMENT: (id: string) => `/api/documents/${id}`,
     DELETE_DOCUMENT: (id: string) => `/api/documents/${id}`,

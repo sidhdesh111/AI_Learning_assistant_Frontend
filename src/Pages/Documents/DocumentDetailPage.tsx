@@ -10,6 +10,8 @@ import ChatInterface from "../../Components/chat/ChatInterface";
 import AI_Action from "../../Components/AI_Action/AI_Action";
 import FlashcardTabs from "../../Components/flashcards/FlashcardTabs";
 import Quiz_Tab from "../../Components/quizzes/Quiz_Tab";
+import axiosInstance from "../../Utils/axiosInstance";
+import { API_PATHS } from "../../Utils/ApiPaths";
 
 type DocumentResponseType = {
   data: DocumentWithMeta;
@@ -22,6 +24,125 @@ type TabType = {
   label: string;
   content: React.ReactNode;
 }[];
+
+/**
+ * Loads the PDF through the API (Bearer token) so the iframe does not open
+ * a separate origin URL like /uploads/... (which can show "refused to connect" in production).
+ * If the document is on Cloudinary, the API redirects and axios still returns a PDF blob.
+ */
+const DocumentPdfViewer = ({
+  doc,
+  documentId,
+}: {
+  doc: DocumentWithMeta;
+  documentId: string;
+}) => {
+  const [src, setSrc] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(true);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+    let cancelled = false;
+
+    const load = async () => {
+      setPdfLoading(true);
+      setLoadError(null);
+      setSrc(null);
+
+      if (
+        doc.cloudinaryUrl &&
+        /^https?:\/\//i.test(doc.cloudinaryUrl.trim())
+      ) {
+        setSrc(doc.cloudinaryUrl.trim());
+        setPdfLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await axiosInstance.get<Blob>(
+          API_PATHS.DOCUMENTS.GET_DOCUMENT_FILE(documentId),
+          { responseType: "blob" },
+        );
+        if (cancelled) return;
+        if (!data || data.size === 0) {
+          setLoadError("PDF file is empty or missing on the server.");
+          return;
+        }
+        const type = data.type || "";
+        if (
+          type.includes("json") ||
+          (type &&
+            !type.includes("pdf") &&
+            type !== "application/octet-stream")
+        ) {
+          setLoadError("The server did not return a valid PDF.");
+          return;
+        }
+        objectUrl = URL.createObjectURL(data);
+        setSrc(objectUrl);
+      } catch {
+        if (!cancelled) {
+          setLoadError(
+            "Could not load the document. Check that the API is reachable and that the file still exists on the server.",
+          );
+        }
+      } finally {
+        if (!cancelled) setPdfLoading(false);
+      }
+    };
+
+    void load();
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [documentId, doc.cloudinaryUrl, doc.filePath]);
+
+  if (pdfLoading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Spin_loader width={60} height={60} border={5} color="green" />
+      </div>
+    );
+  }
+
+  if (loadError || !src) {
+    return (
+      <div className="text-center p-8 text-neutral-600 max-w-lg mx-auto">
+        {loadError ?? "PDF unavailable."}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-md">
+      <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-gray-50">
+        <span className="text-sm font-medium text-gray-700">
+          Document Viewer
+        </span>
+        <a
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ExternalLink size={16} /> Open in New Tab
+        </a>
+      </div>
+      <div className="bg-gray-100 p-1">
+        <iframe
+          src={src}
+          title="Document Viewer"
+          className="w-full h-[70vh] rounded border border-gray-300"
+          style={{
+            colorScheme: "light",
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
 const DocumentDetailPage = () => {
   const { id } = useParams();
@@ -44,19 +165,6 @@ const DocumentDetailPage = () => {
     fetchdocumentDetails();
   }, [id]);
 
-  const getPDFUrl = () => {
-    if (!document?.data?.filePath) return null;
-
-    const filePath = document.data.filePath;
-    if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
-      return filePath;
-    }
-
-    const baseUrl = import.meta.env.VITE_BASE_URL || "https://ailearningserver.naranexus.com/";
-
-    return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
-  };
-
   const renderContent = () => {
     if (loading) {
       return (
@@ -66,37 +174,15 @@ const DocumentDetailPage = () => {
       );
     }
 
-    if (!document?.data || !document?.data?.filePath) {
+    if (
+      !document?.data ||
+      (!document.data.filePath && !document.data.cloudinaryUrl)
+    ) {
       return <div className="text-center p-8">PDF Document not found.</div>;
     }
 
-    const pdfUrl: string | null = getPDFUrl();
     return (
-      <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-md">
-        <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-gray-50">
-          <span className="text-sm font-medium text-gray-700">
-            Document Viewer
-          </span>
-          <Link
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-            to={`${pdfUrl}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink size={16} /> Open in New Tab
-          </Link>
-        </div>
-        <div className="bg-gray-100 p-1">
-          <iframe
-            src={pdfUrl!}
-            title="Document Viewer"
-            className="w-full h-[70vh] rounded border border-gray-300"
-            style={{
-              colorScheme: "light",
-            }}
-          />
-        </div>
-      </div>
+      <DocumentPdfViewer doc={document.data} documentId={id!} />
     );
   };
 

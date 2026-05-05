@@ -5,9 +5,10 @@
 
 import axios from "axios";
 import { API_PATHS } from "./ApiPaths";
+import { normalizeApiBaseUrl } from "./apiBaseUrl";
 import { clearTokens } from "./tokenManager";
 
-const API_URL = import.meta.env.VITE_BASE_URL;
+const API_URL = normalizeApiBaseUrl(import.meta.env.VITE_BASE_URL);
 
 // Flag to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;

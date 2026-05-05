@@ -5,8 +5,9 @@ import axios, {
 import { getAccessToken, isTokenExpiringSoon } from "./tokenManager";
 import { handleTokenRefresh } from "./tokenRefreshService";
 import { API_PATHS } from "./ApiPaths";
+import { normalizeApiBaseUrl } from "./apiBaseUrl";
 
-const URL: string = import.meta.env.VITE_BASE_URL;
+const URL: string = normalizeApiBaseUrl(import.meta.env.VITE_BASE_URL);
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: URL,

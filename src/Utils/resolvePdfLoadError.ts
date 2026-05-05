@@ -31,7 +31,7 @@ export async function resolvePdfLoadErrorMessage(
       if (status === 404) {
         return (
           serverMsg ||
-          "The PDF is not on the server. After a deploy, local files are often lost—re-upload the document or configure Cloudinary for durable storage."
+          "The PDF is not on the server. After a deploy, files in a non-persistent uploads folder are often lost—re-upload the document, or mount a persistent volume for the server’s uploads directory."
         );
       }
       if (status === 401) {

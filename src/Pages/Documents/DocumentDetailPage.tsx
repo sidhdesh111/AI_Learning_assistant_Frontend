@@ -27,15 +27,12 @@ type TabType = {
 }[];
 
 /**
- * Loads the PDF through the API (Bearer token) so the iframe does not open
- * a separate origin URL like /uploads/... (which can show "refused to connect" in production).
- * If the document is on Cloudinary, the API redirects and axios still returns a PDF blob.
+ * Loads the PDF from the server only: GET /api/documents/:id/file streams the file from disk
+ * (authorized request, works when public /uploads is not exposed to the browser).
  */
 const DocumentPdfViewer = ({
-  doc,
   documentId,
 }: {
-  doc: DocumentWithMeta;
   documentId: string;
 }) => {
   const [src, setSrc] = useState<string | null>(null);
@@ -50,15 +47,6 @@ const DocumentPdfViewer = ({
       setPdfLoading(true);
       setLoadError(null);
       setSrc(null);
-
-      if (
-        doc.cloudinaryUrl &&
-        /^https?:\/\//i.test(doc.cloudinaryUrl.trim())
-      ) {
-        setSrc(doc.cloudinaryUrl.trim());
-        setPdfLoading(false);
-        return;
-      }
 
       try {
         const { data } = await axiosInstance.get<Blob>(
@@ -96,7 +84,7 @@ const DocumentPdfViewer = ({
       cancelled = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [documentId, doc.cloudinaryUrl, doc.filePath]);
+  }, [documentId]);
 
   if (pdfLoading) {
     return (
@@ -173,16 +161,11 @@ const DocumentDetailPage = () => {
       );
     }
 
-    if (
-      !document?.data ||
-      (!document.data.filePath && !document.data.cloudinaryUrl)
-    ) {
+    if (!document?.data || !document.data.filePath) {
       return <div className="text-center p-8">PDF Document not found.</div>;
     }
 
-    return (
-      <DocumentPdfViewer doc={document.data} documentId={id!} />
-    );
+    return <DocumentPdfViewer documentId={id!} />;
   };
 
   const renderChat = () => {

@@ -176,7 +176,7 @@ const MainFooter = () => {
           </div>
         </div>
       </div>
-      <div className="container mx-auto py-2 bg-linear-to-br from-emerald-500 to-teal-800 px-2 lg:px-10">
+      <div className="py-2 bg-linear-to-br from-emerald-500 to-teal-800 px-2 lg:px-10">
         <p className="text-center text-sm font-medium text-white flex flex-col lg:flex-row items-center justify-center">
           &copy; Copyright 2026 NaraNexus LLP, Inc. All Rights Reserved, Design
           and Develop by{" "}

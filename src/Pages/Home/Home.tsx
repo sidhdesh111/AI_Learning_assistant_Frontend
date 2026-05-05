@@ -353,7 +353,7 @@ const Home = () => {
                 better, personalise learning more deeply, and reclaim up to 10
                 hours every week.
               </p>
-              <Link to={"/"} className="w-full block text-center lg:text-start">
+              <Link to={"/register"} className="w-full block text-center lg:text-start">
                 <button
                   type="button"
                   className="px-6 py-2 rounded-md bg-linear-to-br from-emerald-400 to-teal-500 text-white font-medium hover:from-teal-500 hover:to-emerald-400 transition-all duration-500 cursor-pointer active:scale-95 disabled:pointer-events-none"
